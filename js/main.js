@@ -1,226 +1,163 @@
-const text = `Погода бывает разной:
-от яркого солнечного дня, когда небосвод раскрашен в златистые тона, до серых туч, нависших над городом как тяжёлые, 
-обремененные обещанием дождя покровы. Каждый сезон приносит свои особенности, словно мастер, с любовью и тщанием работающий над искусным полотном. Летние дни окутывают теплом, дарят 
-солнечные ласки и зовут на прогулки в парки, где деревья шепчут тайны ветра.
-Осень же проявляет всю свою палитру, наполняя воздух душистым ароматом упавших
-листьев и создавая щедрые краски закатов. Зима обнимает мир снежным покрывалом, 
-когда каждый шорох под ногами становится музыкой, а морозное дыхание превращает каждый 
-вдох в такую желанную свежесть. В этом хороводе сменяющихся сезонов находится особое очарование, 
-завораживающее и вдохновляющее. Весна возвращает жизнь, пробуждает природу и дарит надежду на 
-новые начинания. Погода — это не просто явление, это отражение наши эмоций, философия времени, 
-которая позволяет нам чувствовать себя частью чего-то большего, чем мы сами.`;
+;(function () {
 
-const inputElement = document.querySelector("#input");
-const textElement = document.querySelector("#textExample");
+const text = `Также эксперимент участниками дальнейших оценить условий активизации. Эксперимент активности модель занимаемых и задач. 
+Плановых сфера же же организации активности и порядка, место условий модель развития. Финансовых проверки форм прогрессивного рост активности рост образом порядка, играет в важную играет порядка, же нашей таким образом анализа эксперимент нашей количественный оценить от сложившаяся способствует способствует поставленных обучения от задания порядка, финансовых и организации количественный участниками развития. 
+Новая требуют эксперимент нашей количественный развития. Количественный условий. Участниками играет практика порядка, же порядка, и повседневная требуют играет и постоянный нас организационной высшего равным структура задания организационной порядка, нашей активности плановых практика постоянный кадров от сфера и сложившаяся играет и и в кадров значение активности плановых а дальнейших интересный новая задач. Направлений соответствующий также активизации. Финансовых деятельности условий организации, форм и задача значение новая нас оценить задания дальнейших эксперимент а способствует развития. Порядка, направлений по реализации кадров нашей идейные поставленных соответствующий позволяет сложившаяся участниками показывает, в высшего направлений идейные задач.`;
+
+const inputElement = document.querySelector('#input');
+const textExample = document.querySelector('#text-example');
+const lines = getLines(text);
+
 let letterId = 1;
-let startMoment = null;
-let started = false;
-
-let letterCounter = 0;
-let letterCounterError = 0;
-
-let liness = getLine(text);
 
 init();
 
-// функция обхода предложения (разделение предложения на числое кратное 70ти)
-function getLine(text) {
-  const lines = [];
-  let line = [];
-  let idCounter = 0;
 
-  for (const originalLetter of text) {
-    idCounter += 1;
-    let letter = originalLetter;
+function init(){
+    update();
 
-    if (letter === " ") {
-      letter = "°";
-    }
+    inputElement.focus();
 
-    if (letter === "\n") {
-      letter = "¶\n";
-    }
+    inputElement.addEventListener('keydown', function(e){ // событие при нажатии клавиши
+        const currentLineNumber = getCurrentLineNumber();
 
-    line.push({
-      id: idCounter,
-      label: letter,
-      origin: originalLetter,
-      success: true,
-    });
-
-    if (line.length >= 70 || letter === "¶\n") {
-      lines.push(line);
-      line = [];
-    }
-  }
-
-  if (line.lenght > 0) {
-    lines.push(line);
-  }
-
-  return lines;
-}
-
-// функция получения номера необходимой строки
-function getCurrentLineNumber() {
-  for (let i = 0; i < liness.length; i++) {
-    for (const letter of liness[i]) {
-      if (letter.id === letterId) {
-        return i;
-      }
-    }
-  }
-}
-
-// функция добавления текста в параграф и добавления необходимых стилей
-function lineToHtml(line) {
-  const divElement = document.createElement("div");
-  divElement.classList.add("line");
-
-  for (let letter of line) {
-    const spanElement = document.createElement("span");
-    spanElement.textContent += letter.label;
-    divElement.append(spanElement);
-
-    if (letter.id < letterId) {
-      spanElement.classList.add("done");
-    } else if (!letter.success) {
-      spanElement.classList.add("hint");
-    }
-  }
-
-  return divElement;
-}
-
-//функция обновления 3-х отображаемых и актуальных строк #textElement
-function update() {
-  textElement.innerHTML = "";
-  const currentLineNumber = getCurrentLineNumber();
-
-  for (let i = 0; i < liness.length; i++) {
-    const html = lineToHtml(liness[i]);
-    textElement.append(html);
-
-    if (currentLineNumber > i || i > currentLineNumber + 2) {
-      html.classList.add("hidden");
-    }
-  }
-}
-
-// функция возврата необходимой буквы в тексте
-function getCurrentLetter() {
-  for (let line of liness) {
-    for (let letter of line) {
-      if (letter.id === letterId) {
-        return letter;
-      }
-    }
-  }
-}
-
-// функция при старте работы приложения
-function init() {
-  update();
-
-  inputElement.focus();
-
-  // прослушка клавиш и добавления класса hint
-  inputElement.addEventListener("keydown", function (e) {
-    const element = document.querySelector(
-      '[data-key="' + e.key.toLowerCase() + '"]'
-    );
-
-    let currentLetter = getCurrentLetter();
-    let currentLineNumber = getCurrentLineNumber();
-    const isKey = e.key === currentLetter.origin;
-    const isEnter = e.key === "Enter" && currentLetter.origin === "\n";
-
-    if (e.key !== "Shift") {
-      letterCounter++;
-    }
-
-    if (!started) {
-      started = true;
-      startMoment = Date.now();
-    }
-
-    if (e.metaKey && e.key === "r") {
-      // специфика работы с mac комбинация cmd + r
-      return;
-    }
-
-    if (element) {
-      element.classList.add("hint");
-    }
-
-    //работа с SHIFT (left or right)
-    if (e.key.toLowerCase() === "shift") {
-      document
-        .querySelector('[data-key="' + e.code + '"]')
-        .classList.add("hint");
-    }
-
-    if (isKey || isEnter) {
-      letterId++;
-      update();
-    } else {
-      e.preventDefault();
-
-      // считаем ошибки
-      if (e.key !== "Shift") {
-        letterCounterError++;
-      }
-
-      // подсвечиваем все буквы, в которой ошиблись
-      for (let line of liness) {
-        for (let letter of line) {
-          if (letter.origin === currentLetter.origin) {
-            letter.success = false;
-          }
+        if (e.key.startsWith('F') && e.key.length > 1){ // проверка на F-клавиши
+            return
         }
-      }
+        
+        const element = document.querySelector('[data-key="' + e.key +'"]');
 
-      update();
-    }
 
-    if (currentLineNumber !== getCurrentLineNumber()) {
-      inputElement.value = "";
-      e.preventDefault();
+        if(e.key === ','){
+            element.classList.add('hint');
+        }
+        console.log(e.key)
 
-      started = false;
-      let time = Date.now() - startMoment;
 
-      document.querySelector("#wordsSpeed").textContent = Math.round(
-        (60000 * letterCounter) / time
-      );
 
-      document.querySelector("#errorProcent").textContent =
-        Math.round((letterCounterError / letterCounter) * 100) + "%";
+        if(element){
+            element.classList.add('hint');
+        }
+        const currentLetter = getCurrentLetter();
+        if(e.key === currentLetter.original || (e.key === 'Enter' && currentLetter.original === '\n')){
+            letterId = letterId + 1;
+            update();
+        } else {
+            e.preventDefault();
+        }
 
-      letterCounter = 0;
-      letterCounterError = 0;
-    }
-  });
+        if(currentLineNumber !== getCurrentLineNumber()){
+            inputElement.value='';
+            e.preventDefault();
+        }
+    })
+    inputElement.addEventListener('keyup', function(e){ // событие при отпускании клавиши
+        const element = document.querySelector('[data-key="' + e.key +'"]');
+        if(element){
+            element.classList.remove('hint');
+        }  
+    })
 
-  // прослушка клавиш и удаление класса hint
-  inputElement.addEventListener("keyup", function (e) {
-    const element = document.querySelector(
-      '[data-key="' + e.key.toLowerCase() + '"]'
-    );
-
-    if (element) {
-      element.classList.remove("hint");
-    }
-
-    //работа с SHIFT (left or right)
-    if (e.key.toLowerCase() === "shift") {
-      document
-        .querySelector('[data-key="' + e.code + '"]')
-        .classList.remove("hint");
-    }
-  });
 }
 
-document.addEventListener("click", () => {
-  inputElement.focus();
-});
+
+
+
+function getLines(text){ // принимеет длинную строку текста, возвращает массив строк со служебной информацией
+    const lines = [];
+    let line = [];
+    let idCounter = 0;
+
+    for(const originalLetter of text){
+        idCounter = idCounter + 1;
+
+        let letter = originalLetter;
+
+        if(letter === ' '){
+            letter = '␣';
+        }
+        if(letter === '\n'){
+            letter = '¶\n';
+        }
+
+        line.push({
+            label: letter,
+            id: idCounter,
+            succes: true,
+            original: originalLetter
+        });
+
+        if(line.length >= 70 || letter === '¶\n'){
+            lines.push(line);
+            line = [];
+        } 
+    }
+
+    if(line.length > 0){
+        lines.push(line)
+    }
+    return lines;
+}
+
+function getCurrentLineNumber(){ // возвращает актуальный номер строки
+    for(let i = 0; i < lines.length; i++){
+        for(letter of lines[i]){
+            if(letter.id === letterId){
+                return i
+            }
+        }
+    }
+}
+
+function lineToHtml (line){ // принимеет строку со служебной информацией и возвращает html-структуру
+    // <div class="line line-1">
+	// 		<span class="done"> На переднем плане, прямо перед</span> 
+	// 		<span class="hint">н</span>ами, расположен был дворик, где стоял
+	// 	</div>
+
+    const divElement = document.createElement('div');
+    divElement.classList.add('line');
+
+    for (const letter of line){
+        const spanElement = document.createElement('span');
+        spanElement.textContent = letter.label;
+        divElement.append(spanElement);
+
+        if(letterId > letter.id){
+            spanElement.classList.add('done');
+        }
+    }
+    return divElement
+}
+
+function update(){ // функция обновления 3-х отображаемых актуальных строк всего текста
+    const currentLineNumber = getCurrentLineNumber();
+    textExample.innerHTML = '';
+
+    for(let i = 0; i < lines.length; i++){
+        const html = lineToHtml(lines[i]); // структурная строчка
+        textExample.append(html);
+
+        if(i < currentLineNumber || i > currentLineNumber + 2){
+            html.classList.add('hidden')
+        }
+    }
+}
+
+function getCurrentLetter(){ // возвращает символ ожидаемый программой
+    for(let i = 0; i < lines.length; i++){
+        for(const letter of lines[i]){
+            if (letterId === letter.id){
+                return letter;
+            }
+        }
+    }
+}
+
+
+})();
+
+
+
+
+
